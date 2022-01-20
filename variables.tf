@@ -36,11 +36,11 @@ variable "zone_id" {
 variable "lambda_origin_request_arn" {
   description = "Lambda edge function arn to bind to origin-request"
   type        = string 
-  default     = ""
+  default     = null
 }
 
 variable "lambda_origin_response_arn" {
   description = "Lambda edge function arn to bind to origin-response"
   type        = string 
-  default     = ""
+  default     = null
 }
