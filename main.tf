@@ -115,7 +115,7 @@ resource "aws_cloudfront_distribution" "cdn" {
     viewer_protocol_policy = "redirect-to-https"
 
     dynamic "lambda_function_association" {
-      for_each = var.lambda_origin_request_arn ? [{}] : []
+      for_each = var.lambda_origin_request_arn == "" ? [] : [{}]
       content {
         event_type = "origin-request"
         lambda_arn = var.lambda_origin_request_arn
@@ -123,7 +123,7 @@ resource "aws_cloudfront_distribution" "cdn" {
     }
 
     dynamic "lambda_function_association" {
-      for_each = var.lambda_origin_response_arn ? [{}] : []
+      for_each = var.lambda_origin_response_arn == "" ? [] : [{}]
       content {
         event_type = "origin-response"
         lambda_arn = var.lambda_origin_response_arn
