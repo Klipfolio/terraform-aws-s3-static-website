@@ -28,10 +28,6 @@ resource "aws_s3_bucket" "static_website" {
   tags = merge(tomap({ "Name" = "${var.domain_name}-static_website" }), var.tags)
 }
 
-resource "aws_s3_bucket_public_access_block" "block_on_policy" {
-  bucket = aws_s3_bucket.static_website.id
-  restrict_public_buckets = true
-}
 
 data "aws_iam_policy_document" "static_website_read_with_secret" {
   statement {
