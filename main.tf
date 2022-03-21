@@ -20,7 +20,7 @@ resource "aws_s3_bucket" "static_website" {
 
   website {
     index_document = "index.html"
-    error_document = "error.html"
+    error_document = "index.html"
 
     routing_rules = length(var.public_dir) > 0 ? local.static_website_routing_rules : ""
   }
@@ -28,15 +28,11 @@ resource "aws_s3_bucket" "static_website" {
   tags = merge(tomap({ "Name" = "${var.domain_name}-static_website" }), var.tags)
 }
 
-resource "aws_s3_bucket_public_access_block" "block_on_policy" {
-  bucket = aws_s3_bucket.static_website.id
-  restrict_public_buckets = true
-}
 
 data "aws_iam_policy_document" "static_website_read_with_secret" {
   statement {
     sid       = "1"
-    effect    = "Deny"
+    effect    = "Allow"
     actions   = ["s3:GetObject"]
     resources = ["${aws_s3_bucket.static_website.arn}${local.public_dir_with_leading_slash}/*"]
 
@@ -46,7 +42,7 @@ data "aws_iam_policy_document" "static_website_read_with_secret" {
     }
 
     condition {
-      test     = "StringNotLike"
+      test     = "StringLike"
       variable = "aws:UserAgent"
       values   = ["${var.secret}"]
     }
@@ -89,13 +85,13 @@ resource "aws_cloudfront_distribution" "cdn" {
 
   custom_error_response {
     error_code         = 403
-    response_page_path = "/error.html"
+    response_page_path = "/index.html"
     response_code      = 404
   }
 
   custom_error_response {
     error_code         = 404
-    response_page_path = "/error.html"
+    response_page_path = "/index.html"
     response_code      = 404
   }
 
